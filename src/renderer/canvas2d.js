@@ -4,7 +4,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
   var _getColorPalette = function(config) {
     var gradientConfig = config.gradient || config.defaultGradient;
     var paletteCanvas = document.createElement('canvas');
-    var paletteCtx = paletteCanvas.getContext('2d');
+    var paletteCtx = paletteCanvas.getContext('2d', { willReadFrequently: true });
 
     paletteCanvas.width = 256;
     paletteCanvas.height = 1;
@@ -45,7 +45,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
   var _getPointTemplate = function(radius, blurFactor) {
     var tplCanvas = document.createElement('canvas');
-    var tplCtx = tplCanvas.getContext('2d');
+    var tplCtx = tplCanvas.getContext('2d', { willReadFrequently: true });
     var x = radius;
     var y = radius;
     tplCanvas.width = tplCanvas.height = radius*2;
@@ -117,9 +117,9 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
     this._width = canvas.width = edgeCanvas.width = faceCanvas.width = config.width || +(computed.width.replace(/px/,''));
     this._height = canvas.height = edgeCanvas.height = faceCanvas.height = config.height || +(computed.height.replace(/px/,''));
 
-    this.faceCtx = faceCanvas.getContext('2d');
-    this.edgeCtx = edgeCanvas.getContext('2d');
-    this.ctx = canvas.getContext('2d');
+    this.faceCtx = faceCanvas.getContext('2d', { willReadFrequently: true });
+    this.edgeCtx = edgeCanvas.getContext('2d', { willReadFrequently: true });
+    this.ctx = canvas.getContext('2d', { willReadFrequently: true });
 
     // @TODO:
     // conditional wrapper
@@ -226,7 +226,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
         var templateAlpha = (value-min)/(max-min);
         // this fixes #176: small values are not visible because globalAlpha < .01 cannot be read from imageData
         edgeCtx.globalAlpha = templateAlpha < .01 ? .01 : templateAlpha;
-        
+
         if (!this._absolute || !this._useGradientOpacity) {
           edgeCtx.drawImage(tpl, rectX, rectY);
         }
@@ -342,7 +342,7 @@ var Canvas2dRenderer = (function Canvas2dRendererClosure() {
 
       }
 
-      img.data = imgData;
+      // img.data = imgData;
       this.ctx.putImageData(img, x, y);
 
       this._renderBoundaries = [1000, 1000, 0, 0];
